@@ -443,8 +443,8 @@ namespace Ryujinx.Graphics.Vulkan
 
             AccessFlags srcAccessFlags = _lastModificationAccess | _lastReadAccess;
             AccessFlags dstAccessFlags = depthStencil ?
-                AccessFlags.ColorAttachmentWriteBit | AccessFlags.ColorAttachmentReadBit :
-                AccessFlags.DepthStencilAttachmentWriteBit | AccessFlags.DepthStencilAttachmentReadBit;
+                AccessFlags.DepthStencilAttachmentWriteBit | AccessFlags.DepthStencilAttachmentReadBit :
+                AccessFlags.ColorAttachmentWriteBit | AccessFlags.ColorAttachmentReadBit;
 
             if (srcAccessFlags != AccessFlags.None)
             {
@@ -470,8 +470,8 @@ namespace Ryujinx.Graphics.Vulkan
                 PipelineStageFlags.ColorAttachmentOutputBit;
 
             _lastModificationAccess = depthStencil ?
-                AccessFlags.ColorAttachmentWriteBit :
-                AccessFlags.DepthStencilAttachmentWriteBit;
+                AccessFlags.DepthStencilAttachmentWriteBit :
+                AccessFlags.ColorAttachmentWriteBit;
         }
 
         public void QueueWriteToReadBarrier(CommandBufferScoped cbs, AccessFlags dstAccessFlags, PipelineStageFlags dstStageFlags)
