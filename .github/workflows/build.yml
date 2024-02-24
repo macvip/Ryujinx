@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 45
     strategy:
       matrix:
-        configuration: [ Debug, Release ]
+        configuration: [ Release ]
 
     steps:
       - uses: actions/checkout@v4
