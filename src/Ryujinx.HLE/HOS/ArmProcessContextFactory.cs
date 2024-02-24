@@ -72,8 +72,7 @@ namespace Ryujinx.HLE.HOS
 
                 AddressSpace addressSpace = null;
 
-                // We want to use host tracked mode if the host page size is > 4KB.
-                if ((mode == MemoryManagerMode.HostMapped || mode == MemoryManagerMode.HostMappedUnsafe) && MemoryBlock.GetPageSize() <= 0x1000)
+                if (mode == MemoryManagerMode.HostMapped || mode == MemoryManagerMode.HostMappedUnsafe)
                 {
                     if (!AddressSpace.TryCreate(context.Memory, addressSpaceSize, MemoryBlock.GetPageSize() == MemoryManagerHostMapped.PageSize, out addressSpace))
                     {
@@ -92,21 +91,13 @@ namespace Ryujinx.HLE.HOS
 
                     case MemoryManagerMode.HostMapped:
                     case MemoryManagerMode.HostMappedUnsafe:
-                        if (addressSpace == null)
+                        if (addressSpaceSize != addressSpace.AddressSpaceSize)
                         {
-                            var memoryManagerHostTracked = new MemoryManagerHostTracked(context.Memory, addressSpaceSize, mode == MemoryManagerMode.HostMappedUnsafe, invalidAccessHandler);
-                            processContext = new ArmProcessContext<MemoryManagerHostTracked>(pid, cpuEngine, _gpu, memoryManagerHostTracked, addressSpaceSize, for64Bit);
+                            Logger.Warning?.Print(LogClass.Emulation, $"Allocated address space (0x{addressSpace.AddressSpaceSize:X}) is smaller than guest application requirements (0x{addressSpaceSize:X})");
                         }
-                        else
-                        {
-                            if (addressSpaceSize != addressSpace.AddressSpaceSize)
-                            {
-                                Logger.Warning?.Print(LogClass.Emulation, $"Allocated address space (0x{addressSpace.AddressSpaceSize:X}) is smaller than guest application requirements (0x{addressSpaceSize:X})");
-                            }
 
-                            var memoryManagerHostMapped = new MemoryManagerHostMapped(addressSpace, mode == MemoryManagerMode.HostMappedUnsafe, invalidAccessHandler);
-                            processContext = new ArmProcessContext<MemoryManagerHostMapped>(pid, cpuEngine, _gpu, memoryManagerHostMapped, addressSpace.AddressSpaceSize, for64Bit);
-                        }
+                        var memoryManagerHostMapped = new MemoryManagerHostMapped(addressSpace, mode == MemoryManagerMode.HostMappedUnsafe, invalidAccessHandler);
+                        processContext = new ArmProcessContext<MemoryManagerHostMapped>(pid, cpuEngine, _gpu, memoryManagerHostMapped, addressSpace.AddressSpaceSize, for64Bit);
                         break;
 
                     default:

@@ -15,9 +15,9 @@ namespace Ryujinx.Cpu.Jit
             _tickSource = tickSource;
             _translator = new Translator(new JitMemoryAllocator(forJit: true), memory, for64Bit);
 
-            if (memory.Type.IsHostMappedOrTracked())
+            if (memory.Type.IsHostMapped())
             {
-                NativeSignalHandler.InitializeSignalHandler();
+                NativeSignalHandler.InitializeSignalHandler(MemoryBlock.GetPageSize());
             }
 
             memory.UnmapEvent += UnmapHandler;

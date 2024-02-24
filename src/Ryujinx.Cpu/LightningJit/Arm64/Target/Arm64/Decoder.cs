@@ -274,8 +274,7 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
 
                 uint tempGprUseMask = gprUseMask | instGprReadMask | instGprWriteMask;
 
-                if (CalculateAvailableTemps(tempGprUseMask) < CalculateRequiredGprTemps(memoryManager.Type, tempGprUseMask) ||
-                    totalInsts++ >= MaxInstructionsPerFunction)
+                if (CalculateAvailableTemps(tempGprUseMask) < CalculateRequiredGprTemps(tempGprUseMask) || totalInsts++ >= MaxInstructionsPerFunction)
                 {
                     isTruncated = true;
                     address -= 4UL;
@@ -374,9 +373,9 @@ namespace Ryujinx.Cpu.LightningJit.Arm64.Target.Arm64
             return false;
         }
 
-        private static int CalculateRequiredGprTemps(MemoryManagerType mmType, uint gprUseMask)
+        private static int CalculateRequiredGprTemps(uint gprUseMask)
         {
-            return BitOperations.PopCount(gprUseMask & RegisterUtils.ReservedRegsMask) + RegisterAllocator.CalculateMaxTempsInclFixed(mmType);
+            return BitOperations.PopCount(gprUseMask & RegisterUtils.ReservedRegsMask) + RegisterAllocator.MaxTempsInclFixed;
         }
 
         private static int CalculateAvailableTemps(uint gprUseMask)

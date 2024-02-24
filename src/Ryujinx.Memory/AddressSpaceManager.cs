@@ -331,9 +331,9 @@ namespace Ryujinx.Memory
             {
                 var hostRegion = hostRegions[i];
 
-                if (hostRegion.Address >= backingStart && hostRegion.Address < backingEnd)
+                if ((ulong)hostRegion.Address >= backingStart && (ulong)hostRegion.Address < backingEnd)
                 {
-                    regions[count++] = new MemoryRange(hostRegion.Address - backingStart, hostRegion.Size);
+                    regions[count++] = new MemoryRange((ulong)hostRegion.Address - backingStart, hostRegion.Size);
                 }
             }
 

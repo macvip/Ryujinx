@@ -1126,23 +1126,11 @@ namespace Ryujinx.Cpu.LightningJit.Arm32.Target.Arm64
             Operand destination64 = new(destination.Kind, OperandType.I64, destination.Value);
             Operand basePointer = new(regAlloc.FixedPageTableRegister, RegisterType.Integer, OperandType.I64);
 
-            // We don't need to mask the address for the safe mode, since it is already naturally limited to 32-bit
-            // and can never reach out of the guest address space.
-
-            if (mmType.IsHostTracked())
+            if (mmType == MemoryManagerType.HostMapped || mmType == MemoryManagerType.HostMappedUnsafe)
             {
-                int tempRegister = regAlloc.AllocateTempGprRegister();
+                // We don't need to mask the address for the safe mode, since it is already naturally limited to 32-bit
+                // and can never reach out of the guest address space.
 
-                Operand pte = new(tempRegister, RegisterType.Integer, OperandType.I64);
-
-                asm.Lsr(pte, guestAddress, new Operand(OperandKind.Constant, OperandType.I32, 12));
-                asm.LdrRr(pte, basePointer, pte, ArmExtensionType.Uxtx, true);
-                asm.Add(destination64, pte, guestAddress);
-
-                regAlloc.FreeTempGprRegister(tempRegister);
-            }
-            else if (mmType.IsHostMapped())
-            {
                 asm.Add(destination64, basePointer, guestAddress);
             }
             else
