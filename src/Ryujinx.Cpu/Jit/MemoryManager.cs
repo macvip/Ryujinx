@@ -360,7 +360,7 @@ namespace Ryujinx.Cpu.Jit
             return _pageTable.Read<ulong>((va / PageSize) * PteSize) != 0;
         }
 
-        private nuint GetPhysicalAddressInternal(ulong va)
+        private ulong GetPhysicalAddressInternal(ulong va)
         {
             return (nuint)(PteToPa(_pageTable.Read<ulong>((va / PageSize) * PteSize) & ~(0xffffUL << 48)) + (va & PageMask));
         }
@@ -504,9 +504,9 @@ namespace Ryujinx.Cpu.Jit
             => _backingMemory.GetSpan(pa, size);
 
         protected override nuint TranslateVirtualAddressChecked(ulong va)
-            => GetPhysicalAddressInternal(va);
+            => (nuint)GetPhysicalAddressInternal(va);
 
         protected override nuint TranslateVirtualAddressUnchecked(ulong va)
-            => GetPhysicalAddressInternal(va);
+            => (nuint)GetPhysicalAddressInternal(va);
     }
 }

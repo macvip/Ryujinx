@@ -387,6 +387,5 @@ namespace Ryujinx.Cpu.AppleHv
 
         protected override nuint TranslateVirtualAddressUnchecked(ulong va)
             => GetPhysicalAddressInternal(va);
-
     }
 }
